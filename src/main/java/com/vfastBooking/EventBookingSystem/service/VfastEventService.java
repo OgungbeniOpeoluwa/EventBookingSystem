@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.vfastBooking.EventBookingSystem.exception.GlobalException.NOTEXIST;
 import static com.vfastBooking.EventBookingSystem.util.Mapper.map;
 
 @Service
@@ -36,16 +37,26 @@ public class VfastEventService implements EventService{
     private TicketService ticketService;
     @Override
     public CreateEventResponse createEvent(CreateEventRequest eventRequest, User organizer) throws EventBookingException {
-        Event event = modelMapper.map(eventRequest,Event.class);
+       if(checkIfEventExist(eventRequest.getEventName()))throw new EventExistException(eventRequest.getEventName() +"Already exist");
+
+         Event event = modelMapper.map(eventRequest,Event.class);
+
         LocalDate localDate = Verification.checkDate(eventRequest.getDate());
         EventCategory category = checkIfCategoryExist(eventRequest.getCategory());
-        if(category == null)throw new EventCategoryException("Event category doesn't exist");
+
+        if(category == null)throw new EventCategoryException(String.format(NOTEXIST,eventRequest.getCategory()));
         event.setCategory(category);
         event.setDate(localDate);
         event.setOrganizer(organizer);
         eventRepository.save(event);
         return new CreateEventResponse(eventRequest.getEventName() + " "+ "has been created successfully");
     }
+    private boolean checkIfEventExist(String eventName){
+        Optional<Event> event = eventRepository.findByName(eventName);
+        if(event.isPresent())return true;
+        return false;
+    }
+
     private EventCategory checkIfCategoryExist(String category){
         for (EventCategory categories:EventCategory.values()) {
             if (categories.name().equalsIgnoreCase(category))return categories;
@@ -61,7 +72,7 @@ public class VfastEventService implements EventService{
     @Override
     public Event findEventByName(String eventName) throws EventNotFoundException {
         Optional<Event> event =  eventRepository.findByName(eventName);
-       return event.orElseThrow(()->new EventNotFoundException(eventName +" "+ "doesn't exist"));
+       return event.orElseThrow(()->new EventNotFoundException(String.format(NOTEXIST,eventName)));
 
     }
 
@@ -75,13 +86,14 @@ public class VfastEventService implements EventService{
 
          event.setAvailableAttendeesCount(event.getAvailableAttendeesCount()-bookEvent.getNumberOfTicket());
 
+        bookEvent.setEmail(user.getEmail());
+
+        Ticket ticket = ticketService.createTicket(bookEvent,event);
+
         event.getBookedUser().add(user);
 
         eventRepository.save(event);
 
-        bookEvent.setEmail(user.getEmail());
-
-        Ticket ticket = ticketService.createTicket(bookEvent,event);
 
         return map(ticket,event);
     }
@@ -143,6 +155,18 @@ public class VfastEventService implements EventService{
     public List<User> findBookedUserForTheEvent(String eventName) throws EventNotFoundException {
         Event event = findEventByName(eventName);
         return event.getBookedUser();
+    }
+
+    @Override
+    public List<Event> findAllEventForTheNextDay() {
+        LocalDate  currentDate = LocalDate.now();
+        int day =  currentDate.getDayOfMonth() + 1;
+        System.out.println(eventRepository.findAll());
+        return eventRepository.findAll()
+                .stream()
+                .filter(event->
+                        LocalDate.of(currentDate.getYear(),currentDate.getMonth(),day).equals(event.getDate())
+                ).toList();
     }
 
     private  boolean checkIfUserExistInList(User user, String eventName) throws EventNotFoundException {

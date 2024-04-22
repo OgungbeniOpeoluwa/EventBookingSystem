@@ -11,7 +11,7 @@ public class Verification {
 
     public static LocalDate checkDate(String date) throws InvalidInputException {
         System.out.println(date);
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try{
             return LocalDate.parse(date,dateTimeFormatter);
         }catch (DateTimeException e){

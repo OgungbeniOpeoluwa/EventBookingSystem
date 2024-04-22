@@ -36,4 +36,6 @@ public interface EventService {
     List<BookedEventResponse> viewBookedEvents(User last);
 
     List<User> findBookedUserForTheEvent(String sholaConference) throws EventNotFoundException;
+
+    List<Event> findAllEventForTheNextDay();
 }

@@ -23,5 +23,4 @@ public interface UserService {
 
     List<BookedEventResponse> viewReservations(String mail) throws  EventBookingException;
 
-//      searchForEvents();
 }
