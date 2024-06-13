@@ -1,42 +1,25 @@
 package com.vfastBooking.EventBookingSystem.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vfastBooking.EventBookingSystem.dto.request.*;
-import com.vfastBooking.EventBookingSystem.dto.response.ApiResponse;
+import com.vfastBooking.EventBookingSystem.dto.request.RegisterRequest;
+import com.vfastBooking.EventBookingSystem.dto.request.UserBookingRequest;
+import com.vfastBooking.EventBookingSystem.dto.request.UserCancelBookingRequest;
+import com.vfastBooking.EventBookingSystem.dto.request.UserCreateEventRequest;
 import com.vfastBooking.EventBookingSystem.dto.response.BookingResponse;
-import com.vfastBooking.EventBookingSystem.dto.response.RegisterResponse;
-import com.vfastBooking.EventBookingSystem.model.Event;
-import com.vfastBooking.EventBookingSystem.model.EventCategory;
-import com.vfastBooking.EventBookingSystem.model.User;
 import com.vfastBooking.EventBookingSystem.repository.EventRepository;
 import com.vfastBooking.EventBookingSystem.repository.UserRepository;
-import com.vfastBooking.EventBookingSystem.service.EventService;
 import com.vfastBooking.EventBookingSystem.service.UserService;
-import lombok.experimental.Accessors;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
