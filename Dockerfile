@@ -3,5 +3,5 @@ COPY . .
 RUN mvn -B clean package -DskipTests
 
 FROM openjdk:21
-COPY --from=build ./target/*.jar eventBooking.jar
-ENTRYPOINT ["java", "-jar","eventBooking.jar"]
+COPY --from=build ./target/*.jar eventbooking.jar
+ENTRYPOINT ["java", "-jar","eventbooking.jar"]
